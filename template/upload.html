@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image/File Upload</title>
+    <style>
+    
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{%static 'asset\image\books-01.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Black color with 50% opacity */
+            z-index: -1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: darkred;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            background-color: darkred;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #8b0000;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .book-details {
+            display: none;
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+
+        .book-details img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>E Library</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Upload</button>
+        </form>
+        
+        <h2>Uploaded Books</h2>
+        <ul>
+            {% for file in files %}
+            <li>
+                <strong>{{ file.book }}</strong> by {{ file.author }}
+                <a href="{% url 'download_file' file.id %}">Download</a> |
+                <button onclick="showBookDetails('{{ file.book }}', '{{ file.author }}', '{{ file.file.url }}')">View</button>
+            </li>
+            {% empty %}
+            <li>No books uploaded yet.</li>
+            {% endfor %}
+        </ul>
+
+        <div class="book-details" id="bookDetails">
+            <h3 id="bookTitle"></h3>
+            <p id="bookAuthor"></p>
+            <img src="" id="bookImage" alt="Book Image">
+        </div>
+    </div>
+
+    <script>
+        function showBookDetails(title, author, imageUrl) {
+            console.log('Image URL:', imageUrl);
+            document.getElementById('bookTitle').innerText = title;
+            document.getElementById('bookAuthor').innerText = 'Author: ' + author;
+            document.getElementById('bookImage').src = imageUrl;
+            document.getElementById('bookDetails').style.display = 'block';
+      
+        }
+    </script>
+</body>
+</html>
